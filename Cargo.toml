@@ -7,6 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+actix-cors = "0.2.0"
 actix-files = "0.2.1"
 actix-rt = "1.0"
 actix-session = "0.3"
@@ -16,6 +17,7 @@ chrono = { version = "0.4.11", features = ["serde"] }
 derive_more = "0.99.5"
 diesel = { version = "1.4.4", features = ["postgres", "uuidv07", "r2d2", "chrono"] }
 dotenv = "0.15.0"
+env_logger = "0.7.1"
 lettre = { git = "https://github.com/lettre/lettre" }
 native-tls = "0.2.4"
 r2d2 = "0.8.8"
