@@ -4,7 +4,7 @@ extern crate serde_json;
 extern crate lettre;
 extern crate native_tls;
 
-
+mod errors;
 mod models;
 mod schema;
 mod vars;
@@ -15,7 +15,7 @@ async fn main() -> std::io::Result<()> {
     use actix_cors::Cors;
     use actix_files::Files;
     use actix_session::CookieSession;
-    use actix_web::{middleware, web, App, HttpServer, http::header};
+    use actix_web::{middleware, web, App, HttpServer};
     use diesel::{
         prelude::*, 
         r2d2::{self, ConnectionManager}
