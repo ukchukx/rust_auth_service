@@ -57,7 +57,6 @@ pub fn smtp_port() -> u16 {
   var("SMTP_PORT").expect("SMTP_PORT is not set").parse::<u16>().ok().expect("SMTP_PORT should be an integer")
 }
 
-#[allow(dead_code)]
 pub fn smtp_sender_name() -> String {
   dotenv().ok();
 

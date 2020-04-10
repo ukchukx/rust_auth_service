@@ -4,9 +4,12 @@ extern crate serde_json;
 extern crate lettre;
 extern crate native_tls;
 
+mod email_service;
 mod errors;
 mod models;
+mod register_handler;
 mod schema;
+mod utils;
 mod vars;
 
 
@@ -49,6 +52,14 @@ async fn main() -> std::io::Result<()> {
                     .max_age(3600)
                     .finish())
             .service(Files::new("/assets", "./templates/assets"))
+            // Routes
+            .service(
+                web::scope("/")
+                    .service(
+                        web::resource("/register")
+                            .route(web::post().to(register_handler::send_confirmation)),
+                    ),
+            )
     })
     .bind(format!("{}:{}", vars::domain(), vars::port()))?
     .run()
