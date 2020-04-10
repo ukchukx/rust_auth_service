@@ -6,6 +6,7 @@ extern crate native_tls;
 
 
 mod models;
+mod schema;
 mod vars;
 
 
