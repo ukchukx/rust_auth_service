@@ -46,3 +46,70 @@ pub async fn sign_out(session: Session, req: HttpRequest) -> HttpResponse {
         false => HttpResponse::MovedPermanently().header(LOCATION, "/signin").finish(),
     }
 }
+
+#[derive(Debug, Deserialize)]
+pub struct AuthData {
+    pub email: String,
+    pub password: String,
+}
+
+pub async fn sign_in(data: web::Json<AuthData>, 
+                  session: Session, 
+                  req: HttpRequest,
+                  pool: web::Data<Pool>) -> Result<HttpResponse, AuthError> {
+    match is_signed_in(&session) {
+        true => {
+            let response = get_current_user(&session).map(|user| HttpResponse::Ok().json(user)).unwrap();
+
+            Ok(response)
+        },
+        false => handle_sign_in(data.into_inner(), &session, &req, &pool)
+    }
+}
+
+fn handle_sign_in(data: AuthData, 
+                session: &Session, 
+                req: &HttpRequest,
+                pool: &web::Data<Pool>) -> Result<HttpResponse, AuthError> {
+    let result = find_user(data, pool);
+    let is_json = is_json_request(req);
+
+    match result {
+        Ok(user) => {
+            set_current_user(&session, &user);
+
+            if is_json {
+                Ok(HttpResponse::Ok().json(user))
+            } else {
+                Ok(to_home())
+            }
+        },
+        Err(err) => {
+            if is_json {
+                Ok(HttpResponse::Unauthorized().json(err.to_string()))
+            } else {
+                let t = SignIn { error: Some(err.to_string()) };
+    
+                Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(t.call().unwrap()))
+            }
+        },
+    }
+}
+
+fn find_user(data: AuthData, pool: &web::Data<Pool>) -> Result<SessionUser, AuthError> {
+    use crate::schema::users::dsl::{email, users};
+    
+    let mut items = users
+        .filter(email.eq(&data.email))
+        .load::<User>(&pool.get().unwrap())?;
+
+    if let Some(user) = items.pop() {
+        if let Ok(matching) = verify(&user.hash, &data.password) {
+            if matching {
+                return Ok(user.into());
+            }
+        }
+    }
+
+    Err(AuthError::NotFound(String::from("User not found")))
+}

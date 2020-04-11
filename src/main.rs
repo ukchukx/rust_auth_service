@@ -70,6 +70,10 @@ async fn main() -> std::io::Result<()> {
                         web::resource("/signout")
                             .route(web::get().to(auth_handler::sign_out))
                             .route(web::delete().to(auth_handler::sign_out)),
+                    )
+                    .service(
+                        web::resource("/signin")
+                            .route(web::post().to(auth_handler::sign_in)),
                     ),
             )
     })
