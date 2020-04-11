@@ -22,3 +22,9 @@ pub struct Password {
 pub struct Me {
     pub user: SessionUser,
 }
+
+#[derive(Template)]
+#[template(path = "pages/sign_in.hbs")]
+pub struct SignIn {
+    pub error: Option<String>,
+}

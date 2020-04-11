@@ -14,7 +14,7 @@ use crate::{
     models::{Pool, SessionUser, User},
     errors::AuthError,
     utils::{is_json_request, get_current_user, is_signed_in, set_current_user, to_home, verify}, 
-    templates::Me
+    templates::{SignIn, Me}
 };
 
 
@@ -65,6 +65,24 @@ pub async fn sign_in(data: web::Json<AuthData>,
         },
         false => handle_sign_in(data.into_inner(), &session, &req, &pool)
     }
+}
+
+pub async fn show_sign_in_form(session: Session) -> Result<HttpResponse, AuthError> {
+    match is_signed_in(&session) {
+        true => Ok(to_home()),
+        false => {
+            let t = SignIn { error: None };
+
+            Ok(HttpResponse::Ok().content_type("text/html; charset=utf-8").body(t.call().unwrap()))
+        }
+    }
+}
+
+pub async fn sign_in_for_browser(data: web::Form<AuthData>, 
+                                session: Session, 
+                                req: HttpRequest,
+                                pool: web::Data<Pool>) -> Result<HttpResponse, AuthError> {
+    handle_sign_in(data.into_inner(), &session, &req, &pool)
 }
 
 fn handle_sign_in(data: AuthData, 
