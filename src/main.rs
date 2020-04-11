@@ -49,8 +49,7 @@ async fn main() -> std::io::Result<()> {
                     .secure(false))
             .wrap(
                 Cors::new()
-                    .allowed_origin("*")
-                    .allowed_methods(vec!["GET", "POST", "DELETE"])
+                    .allowed_methods(vec!["GET", "POST", "DELETE", "OPTIONS"])
                     .max_age(3600)
                     .finish())
             .service(Files::new("/assets", "./templates/assets"))

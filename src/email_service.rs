@@ -19,20 +19,18 @@ pub fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), AuthErr
   let expires = confirmation.expires_at.format("%I:%M %p %A, %-d %B, %C%y").to_string();
   let html_text = format!(
       "Please click on the link below to complete registration. <br/>
-       <a href=\"{domain}/register?id={id}&email={email}\">Complete registration</a> <br/>
+       <a href=\"{domain}/register/{id}\">Complete registration</a> <br/>
       This link expires on <strong>{expires}</strong>",
       domain=domain_url,
       id=confirmation.id,
-      email=confirmation.email,
       expires=expires
   );
   let plain_text = format!(
       "Please visit the link below to complete registration:\n
-      {domain}/register.html?id={id}&email={email}\n
+      {domain}/register/{id}\n
       This link expires on {expires}.",
       domain=domain_url,
       id=confirmation.id,
-      email=confirmation.email,
       expires=expires
   );
 
