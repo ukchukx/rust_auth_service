@@ -65,7 +65,12 @@ async fn main() -> std::io::Result<()> {
                     )
                     .route("/register2/{path_id}", web::post().to(password_handler::create_account_for_browser))
                     .route("/register2", web::post().to(register_handler::send_confirmation_for_browser))
-                    .route("/me", web::get().to(auth_handler::me)),
+                    .route("/me", web::get().to(auth_handler::me))
+                    .service(
+                        web::resource("/signout")
+                            .route(web::get().to(auth_handler::sign_out))
+                            .route(web::delete().to(auth_handler::sign_out)),
+                    ),
             )
     })
     .bind(format!("{}:{}", vars::domain(), vars::port()))?

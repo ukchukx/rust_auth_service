@@ -50,18 +50,14 @@ pub fn set_current_user(session: &Session, user: &SessionUser) -> () {
 }
 
 pub fn get_current_user(session: &Session) -> Result<SessionUser, AuthError> {
-    let err = AuthError::AuthenticationError(String::from("Could not retrieve user from session"));
-    let session_result = session.get::<String>("user"); // Returns Result<Option<String>, Error>
+    let msg = "Could not retrieve user from session";
 
-    if session_result.is_err() {
-        return Err(err);
-    }
-
-    session_result
+    session.get::<String>("user")
+        .map_err(|_| AuthError::AuthenticationError(String::from(msg)))
         .unwrap()
         .map_or(
-          Err(err.clone()),
-          |user_str| serde_json::from_str(&user_str).or_else(|_| Err(err)) 
+          Err(AuthError::AuthenticationError(String::from(msg))),
+          |user| serde_json::from_str(&user).or_else(|_| Err(AuthError::AuthenticationError(String::from(msg)))) 
         ) 
 }
 

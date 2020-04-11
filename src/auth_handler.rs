@@ -37,3 +37,12 @@ pub async fn me(session: Session, req: HttpRequest) -> HttpResponse {
         }
     }
 }
+
+pub async fn sign_out(session: Session, req: HttpRequest) -> HttpResponse {
+    session.clear();
+    
+    match is_json_request(&req) {
+        true => HttpResponse::NoContent().finish(),
+        false => HttpResponse::MovedPermanently().header(LOCATION, "/signin").finish(),
+    }
+}
