@@ -1,6 +1,10 @@
 use argonautica::{Hasher, Verifier};
 use actix_session::Session;
-use actix_web::{http::header::CONTENT_TYPE, HttpRequest};
+use actix_web::{
+  http::header::{CONTENT_TYPE, LOCATION}, 
+  HttpRequest, 
+  HttpResponse
+};
 
 use crate::{errors::AuthError, vars, models::SessionUser};
 
@@ -59,4 +63,8 @@ pub fn get_current_user(session: &Session) -> Result<SessionUser, AuthError> {
           Err(err.clone()),
           |user_str| serde_json::from_str(&user_str).or_else(|_| Err(err)) 
         ) 
+}
+
+pub fn to_home() -> HttpResponse {
+  HttpResponse::Found().header(LOCATION, "/me").finish()
 }

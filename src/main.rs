@@ -9,6 +9,7 @@ mod errors;
 mod models;
 mod register_handler;
 mod schema;
+mod templates;
 mod utils;
 mod vars;
 
@@ -57,8 +58,10 @@ async fn main() -> std::io::Result<()> {
                 web::scope("/")
                     .service(
                         web::resource("/register")
+                            .route(web::get().to(register_handler::show_confirmation_form))
                             .route(web::post().to(register_handler::send_confirmation)),
-                    ),
+                    )
+                    .route("/register2", web::post().to(register_handler::send_confirmation_for_browser)),
             )
     })
     .bind(format!("{}:{}", vars::domain(), vars::port()))?
