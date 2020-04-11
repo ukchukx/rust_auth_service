@@ -19,7 +19,7 @@ mod vars;
 async fn main() -> std::io::Result<()> {
     use actix_cors::Cors;
     use actix_files::Files;
-    use actix_session::CookieSession;
+    use actix_redis::RedisSession;
     use actix_web::{middleware, web, App, HttpServer};
     use diesel::{
         prelude::*, 
@@ -42,11 +42,7 @@ async fn main() -> std::io::Result<()> {
             // enable logger
             .wrap(middleware::Logger::default())
             // Enable sessions
-            .wrap(
-                CookieSession::signed(&[0; 32])
-                    .domain(vars::domain_url().as_str())
-                    .name("auth")
-                    .secure(false))
+            .wrap(RedisSession::new("127.0.0.1:6379", &[0; 32]))
             .wrap(
                 Cors::new()
                     .allowed_methods(vec!["GET", "POST", "DELETE", "OPTIONS"])

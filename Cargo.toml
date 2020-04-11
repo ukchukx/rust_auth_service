@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 actix-cors = "0.2.0"
 actix-files = "0.2.1"
+actix-redis = { version = "0.8.0", features = ["web"] }
 actix-rt = "1.0"
 actix-session = "0.3"
 actix-web = "2.0"
