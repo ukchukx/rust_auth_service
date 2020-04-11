@@ -7,6 +7,7 @@ extern crate native_tls;
 mod email_service;
 mod errors;
 mod models;
+mod password_handler;
 mod register_handler;
 mod schema;
 mod templates;
@@ -60,6 +61,10 @@ async fn main() -> std::io::Result<()> {
                         web::resource("/register")
                             .route(web::get().to(register_handler::show_confirmation_form))
                             .route(web::post().to(register_handler::send_confirmation)),
+                    )
+                    .service(
+                        web::resource("/register/{path_id}")
+                            .route(web::post().to(password_handler::create_account)),
                     )
                     .route("/register2", web::post().to(register_handler::send_confirmation_for_browser)),
             )

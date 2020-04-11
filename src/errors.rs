@@ -12,6 +12,9 @@ pub enum AuthError {
     #[display(fmt = "BadId")]
     BadId,
 
+    #[display(fmt = "NotFound: {}", _0)]
+    NotFound(String),
+
     #[display(fmt = "ProcessError: {}", _0)]
     ProcessError(String),
 
@@ -27,6 +30,8 @@ impl ResponseError for AuthError {
     fn error_response(&self) -> HttpResponse {
         match self { 
             AuthError::BadId => HttpResponse::BadRequest().json("Invalid ID"),
+
+            AuthError::NotFound(ref message) => HttpResponse::NotFound().json(message),
 
             AuthError::ProcessError(ref message) => HttpResponse::InternalServerError().json(message),
 

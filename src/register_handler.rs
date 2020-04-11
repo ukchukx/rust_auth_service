@@ -22,7 +22,7 @@ pub async fn send_confirmation(session: Session,
                               data: web::Json<RegisterData>,
                               pool: web::Data<Pool>) -> Result<HttpResponse, AuthError> {
     if is_signed_in(&session) {
-      return Ok(HttpResponse::BadRequest().finish());
+        return Ok(HttpResponse::BadRequest().finish());
     }
             
     let result = web::block(move || create_confirmation(data.into_inner().email, &pool)).await;
