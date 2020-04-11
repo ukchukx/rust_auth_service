@@ -63,8 +63,10 @@ async fn main() -> std::io::Result<()> {
                     )
                     .service(
                         web::resource("/register/{path_id}")
+                            .route(web::get().to(password_handler::show_password_form))
                             .route(web::post().to(password_handler::create_account)),
                     )
+                    .route("/register2/{path_id}", web::post().to(password_handler::create_account_for_browser))
                     .route("/register2", web::post().to(register_handler::send_confirmation_for_browser)),
             )
     })
